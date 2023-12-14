@@ -13,7 +13,9 @@
     "typecheck": "tsc --noEmit",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "analyze": "ANALYZE=true yarn build"
+    "analyze": "ANALYZE=true yarn build",
+    "heroku-postbuild": "npm run config && next build",
+    "config": "ts-node ./scripts/set-env.ts"
   },
   "dependencies": {
     "@daily-co/daily-js": "^0.53.0",
