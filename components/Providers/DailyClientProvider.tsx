@@ -53,6 +53,10 @@ export function DailyClientProvider({
       // attach callObject to window
       (window as any)['callObject'] = newCallObject;
       await newCallObject.preAuth({ url, token });
+
+      if (role === 'viewer') {
+        await newCallObject.join();
+      }
     };
 
     handleCreateCallObject();

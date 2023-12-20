@@ -16,6 +16,8 @@ import {
 import { Header } from '@/components/Header';
 import { Listeners } from '@/components/Listeners';
 import { Loader } from '@/components/Loader';
+import { usePathname } from 'next/navigation';
+import { VcsPreview } from '@/components/Room/Vcs';
 
 const Haircheck = dynamic(
   () => import('@/components/Room/Haircheck').then((mod) => mod.Haircheck),
@@ -44,6 +46,7 @@ export function ViewLayout() {
   const daily = useDaily();
   const meetingState = useMeetingState();
   const { toast } = useToast();
+  const pathname = usePathname();
 
   useDailyEvent(
     'load-attempt-failed',
@@ -92,11 +95,14 @@ export function ViewLayout() {
   );
 
   const content = useMemo(() => {
+
+    const role = pathname.split('/').pop();
+
     switch (meetingState) {
       case 'loaded':
         return <Haircheck />;
       case 'joined-meeting':
-        return <Room />;
+        return role === 'viewer' ? <VcsPreview /> : <Room />;
       case 'left-meeting':
         return <LeftMeeting />;
       case 'error':
@@ -107,7 +113,7 @@ export function ViewLayout() {
       default:
         return <Loader showHeader={false} />;
     }
-  }, [meetingState]);
+  }, [meetingState, pathname]);
 
   useEffect(() => {
     return () => {
