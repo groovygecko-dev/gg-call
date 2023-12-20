@@ -26,6 +26,7 @@ export function DailyClientProvider({
 
   useEffect(() => {
     const handleCreateCallObject = async () => {
+      token = !!token ? token : params.get('token') || '';
       if (callObject || !roomName || (requiresToken && !token)) return;
 
       const role = pathname.split('/').pop();
@@ -55,22 +56,7 @@ export function DailyClientProvider({
     };
 
     handleCreateCallObject();
-  }, [callObject, requiresToken, roomName, pathname, token]);
-
-  useEffect(() => {
-    if (!callObject) return;
-
-    const isRobot = params.get('robot');
-    if (isRobot) {
-      const role = pathname.split('/').pop() as string;
-      if (['producer', 'presenter'].includes(role)) {
-        callObject.setUserData(
-          role === 'producer' ? { onStage: true } : { acceptedToJoin: true },
-        );
-      }
-      callObject.join();
-    }
-  }, [callObject, params, pathname]);
+  }, [callObject, requiresToken, roomName, pathname, token, params]);
 
   if (!callObject) return <Loader />;
 

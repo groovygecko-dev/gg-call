@@ -9,9 +9,9 @@ import { config } from '@/config';
 const CallHeader = dynamic(() =>
   import('@/components/Header/CallHeader').then((mod) => mod.CallHeader),
 );
-const GithubLink = dynamic(() =>
-  import('@/components/Header/GithubLink').then((mod) => mod.GithubLink),
-);
+// const GithubLink = dynamic(() =>
+//   import('@/components/Header/GithubLink').then((mod) => mod.GithubLink),
+// );
 
 export function Header({ inCall = true }: { inCall?: boolean }) {
   return (
@@ -19,11 +19,11 @@ export function Header({ inCall = true }: { inCall?: boolean }) {
       <div className="mx-2 flex h-full items-center justify-between">
         <Link href="/" target="_blank">
           <div className="flex items-center justify-center gap-x-1">
-            <Image src="/slash.png" alt="Daily's Logo" height={30} width={30} />
-            <span className="inline-block font-bold">{config.name}</span>
+            {/* <Image src="/slash.png" alt="Daily's Logo" height={30} width={30} /> */}
+            {/* <span className="inline-block font-bold">{config.name}</span> */}
           </div>
         </Link>
-        {inCall ? <CallHeader /> : <GithubLink />}
+        {inCall ? <CallHeader /> : ''}
       </div>
     </header>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Card } from '@/ui/Card';
 import {
   useDaily,
@@ -7,7 +7,6 @@ import {
 } from '@daily-co/daily-react';
 
 import { Loader } from '@/components/Loader';
-import { NameSetup } from '@/components/Room/Haircheck/NameSetup';
 import { Setup } from '@/components/Room/Haircheck/Setup';
 
 export function Haircheck() {
@@ -16,16 +15,16 @@ export function Haircheck() {
   const { hasPresence } = usePermissions();
   const daily = useDaily();
 
-  const handleContinue = useCallback(
-    async (userName: string) => {
+  useEffect(() => {
+    const haircheck = async () => {
       if (!daily) return;
 
-      await daily.setUserName(userName);
-      if (hasPresence) setState('haircheck');
-      else await daily.join();
-    },
-    [daily, hasPresence],
-  );
+      setState('haircheck');
+    };
+
+    haircheck();
+
+  }, [daily, hasPresence]);
 
   if (!localSessionId) return <Loader showHeader={false} />;
 
@@ -35,7 +34,7 @@ export function Haircheck() {
         {state === 'haircheck' ? (
           <Setup />
         ) : (
-          <NameSetup onContinue={handleContinue} />
+          'Loading'
         )}
       </Card>
     </div>
