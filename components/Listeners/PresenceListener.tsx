@@ -1,6 +1,7 @@
-import { useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import { useCallback, useEffect } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useViewers } from '@/states/viewersState';
+import { useEEToken } from '@/states/eeTokenState';
 import {
   DailyEventObjectParticipantCounts,
   DailyParticipant,
@@ -17,17 +18,22 @@ interface Participant {
 export function PresenceListener() {
   const { name } = useParams();
   const isOwner = useIsOwner();
+  const params = useSearchParams();
 
   const participantIds = useParticipantIds({
     filter: useCallback((p: DailyParticipant) => p.permissions.hasPresence, []),
   });
 
   const [, setViewers] = useViewers();
+  const [eeToken, setEEToken] = useEEToken();
 
   const fetchParticipants = useCallback(async () => {
-    const participantsRes = await fetch(`/api/daily/presence?roomName=${name}`);
-    const { participants }: { participants: Participant[] } =
-      await participantsRes.json();
+    let participants: Participant[] = [];
+
+    if (eeToken && eeToken !== '') {
+      const participantsRes = await fetch(`/api/daily/presence?roomName=${name}`);
+      participants = (await participantsRes.json())?.participants || [];
+    }
 
     const viewers = participants
       .filter((p) => !participantIds.includes(p.id))
@@ -37,7 +43,16 @@ export function PresenceListener() {
       }));
 
     setViewers(viewers);
-  }, [name, participantIds, setViewers]);
+  }, [name, participantIds, setViewers, eeToken]);
+
+
+  useEffect(() => {
+
+    if (!eeToken || eeToken === '') {
+      setEEToken(params.get('eeToken') || '');
+    }
+
+  }, [params, eeToken, setEEToken])
 
   useDailyEvent(
     'participant-counts-updated',
