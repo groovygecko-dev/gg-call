@@ -6,11 +6,27 @@ import DailyIframe, { DailyCall } from '@daily-co/daily-js';
 import { DailyProvider } from '@daily-co/daily-react';
 
 import { Loader } from '@/components/Loader';
+import { useEEApi } from '@/states/eeApiState';
 
 interface DailyClientProps {
   roomName: string;
   token?: string;
   requiresToken?: boolean;
+}
+
+interface EEJoinDataResponse {
+  url: string;
+  token: string;
+  config?: {
+    bandwidth?: {
+      kbs?: number,
+      trackConstraints?: {
+        width?: number,
+        height?: number,
+        frameRate?: number,
+      },
+    }
+  };
 }
 
 export function DailyClientProvider({
@@ -23,15 +39,43 @@ export function DailyClientProvider({
   const params = useSearchParams();
 
   const [callObject, setCallObject] = useState<DailyCall | null>(null);
+  const [eeApi, setEEApi] = useEEApi();
 
   useEffect(() => {
-    const handleCreateCallObject = async () => {
-      token = !!token ? token : params.get('token') || '';
-      if (callObject || !roomName || (requiresToken && !token)) return;
 
+    console.log({
+      token: params.get('eeToken') || '',
+      basePath: params.get('basePath') || '',
+    });
+
+    setEEApi({
+      token: params.get('eeToken') || '',
+      basePath: params.get('basePath') || '',
+    });
+
+    const handleCreateCallObject = async () => {
+
+      console.log(callObject);
+      console.log(roomName);
+      console.log(eeApi);
+
+      if (callObject || !roomName || !eeApi || !eeApi.token || !eeApi.basePath) return;
+      
       const role = pathname.split('/').pop();
 
-      const url = `https://${process.env.NEXT_PUBLIC_DAILY_DOMAIN}.daily.co/${roomName}`;
+      console.log(eeApi);
+
+      const joinDataResponse = await fetch(`${eeApi.basePath}join-data`, {
+        headers: new Headers({
+          'Authorization': `Bearer ${eeApi.token}`,
+          'Content-Type': 'application/json'
+        })
+      });
+
+      const joinData: EEJoinDataResponse = await joinDataResponse.json();
+      const url = joinData.url;
+      token = joinData.token;
+
       let newCallObject: DailyCall | null = null;
       try {
         newCallObject = DailyIframe.createCallObject({

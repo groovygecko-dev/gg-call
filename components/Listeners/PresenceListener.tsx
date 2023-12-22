@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useViewers } from '@/states/viewersState';
-import { useEEToken } from '@/states/eeTokenState';
+import { useEEApi } from '@/states/eeApiState';
 import {
   DailyEventObjectParticipantCounts,
   DailyParticipant,
@@ -25,13 +25,18 @@ export function PresenceListener() {
   });
 
   const [, setViewers] = useViewers();
-  const [eeToken, setEEToken] = useEEToken();
+  const [eeApi, setEEApi] = useEEApi();
 
   const fetchParticipants = useCallback(async () => {
     let participants: Participant[] = [];
 
-    if (eeToken && eeToken !== '') {
-      const participantsRes = await fetch(`/api/daily/presence?roomName=${name}`);
+    if (eeApi && eeApi.token !== '') {
+      const participantsRes = await fetch(`${eeApi.basePath}presence`, {
+        headers: new Headers({
+          'Authorization': `Bearer ${eeApi.token}`,
+          'Content-Type': 'application/json'
+        })
+      });
       participants = (await participantsRes.json())?.participants || [];
     }
 
@@ -43,16 +48,19 @@ export function PresenceListener() {
       }));
 
     setViewers(viewers);
-  }, [name, participantIds, setViewers, eeToken]);
+  }, [name, participantIds, setViewers, eeApi]);
 
 
   useEffect(() => {
 
-    if (!eeToken || eeToken === '') {
-      setEEToken(params.get('eeToken') || '');
+    if (!eeApi || eeApi?.token.toString() === '') {
+      setEEApi({
+        token: params.get('eeToken') || '',
+        basePath: params.get('basePath') || '',
+      });
     }
 
-  }, [params, eeToken, setEEToken])
+  }, [params, eeApi, setEEApi])
 
   useDailyEvent(
     'participant-counts-updated',
