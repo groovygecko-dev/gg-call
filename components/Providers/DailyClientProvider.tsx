@@ -43,27 +43,18 @@ export function DailyClientProvider({
 
   useEffect(() => {
 
-    console.log({
-      token: params.get('eeToken') || '',
-      basePath: params.get('basePath') || '',
-    });
-
-    setEEApi({
-      token: params.get('eeToken') || '',
-      basePath: params.get('basePath') || '',
-    });
+    if (!eeApi || eeApi.token === '') {
+      setEEApi({
+        token: params.get('eeToken') || '',
+        basePath: params.get('basePath') || '',
+      });
+    }
 
     const handleCreateCallObject = async () => {
-
-      console.log(callObject);
-      console.log(roomName);
-      console.log(eeApi);
 
       if (callObject || !roomName || !eeApi || !eeApi.token || !eeApi.basePath) return;
       
       const role = pathname.split('/').pop();
-
-      console.log(eeApi);
 
       const joinDataResponse = await fetch(`${eeApi.basePath}join-data`, {
         headers: new Headers({
@@ -104,7 +95,7 @@ export function DailyClientProvider({
     };
 
     handleCreateCallObject();
-  }, [callObject, requiresToken, roomName, pathname, token, params]);
+  }, [callObject, requiresToken, roomName, pathname, eeApi, params]);
 
   if (!callObject) return <Loader />;
 
