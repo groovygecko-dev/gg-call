@@ -16,13 +16,10 @@ export function Haircheck() {
   const daily = useDaily();
 
   useEffect(() => {
-    const haircheck = async () => {
-      if (!daily) return;
 
-      setState('haircheck');
-    };
-
-    haircheck();
+    if (!daily) return;
+    
+    setState('haircheck');
 
   }, [daily, hasPresence]);
 

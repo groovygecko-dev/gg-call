@@ -43,9 +43,11 @@ export function DailyClientProvider({
 
   useEffect(() => {
 
-    if (!eeApi || eeApi.token === '') {
+    const queryToken = params.get('eeToken') || '';
+
+    if (queryToken !== '' && (!eeApi || eeApi?.token === '')) {
       setEEApi({
-        token: params.get('eeToken') || '',
+        token: queryToken,
         basePath: params.get('basePath') || '',
       });
     }
@@ -62,6 +64,10 @@ export function DailyClientProvider({
           'Content-Type': 'application/json'
         })
       });
+
+      if (!joinDataResponse.ok) {
+        return;
+      }
 
       const joinData: EEJoinDataResponse = await joinDataResponse.json();
       const url = joinData.url;
@@ -95,7 +101,7 @@ export function DailyClientProvider({
     };
 
     handleCreateCallObject();
-  }, [callObject, requiresToken, roomName, pathname, eeApi, params]);
+  }, [callObject, requiresToken, roomName, pathname, setEEApi, eeApi, params]);
 
   if (!callObject) return <Loader />;
 
