@@ -6,7 +6,7 @@ import DailyIframe, { DailyCall } from '@daily-co/daily-js';
 import { DailyProvider } from '@daily-co/daily-react';
 
 import { Loader } from '@/components/Loader';
-import { useEEApi } from '@/states/eeApiState';
+import { useEEApi, ETokenType } from '@/states/eeApiState';
 
 interface DailyClientProps {
   roomName: string;
@@ -44,23 +44,35 @@ export function DailyClientProvider({
   useEffect(() => {
 
     const queryToken = params.get('eeToken') || '';
+    const dailyToken = params.get('token') || '';
 
-    if (queryToken !== '' && (!eeApi || eeApi?.token === '')) {
+    if (queryToken !== '' && !eeApi.tokenSet) {
       setEEApi({
         token: queryToken,
         basePath: params.get('basePath') || '',
+        type: ETokenType.EE,
+        tokenSet: true
+      });
+    }
+
+    if (dailyToken !== '' && !eeApi.tokenSet) {
+      setEEApi({
+        token: queryToken,
+        basePath: params.get('basePath') || '',
+        type: ETokenType.DAILY,
+        tokenSet: true
       });
     }
 
     const handleCreateCallObject = async () => {
 
-      if (callObject || !roomName || !eeApi || !eeApi.token || !eeApi.basePath) return;
+      if (callObject || !roomName || !eeApi || !eeApi.tokenSet) return;
       
       const role = pathname.split('/').pop();
 
       const joinDataResponse = await fetch(`${eeApi.basePath}join-data`, {
         headers: new Headers({
-          'Authorization': `Bearer ${eeApi.token}`,
+          [ETokenType.EE ? 'Authorization': 'Daily-Auth-Token']: ETokenType.EE ? `Bearer ${eeApi.token}`: eeApi.token,
           'Content-Type': 'application/json'
         })
       });
