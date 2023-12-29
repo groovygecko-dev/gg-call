@@ -33,8 +33,8 @@ export function PresenceListener() {
     if (eeApi.tokenSet) {
       const participantsRes = await fetch(`${eeApi.basePath}presence`, {
         headers: new Headers({
-          [ETokenType.EE ? 'Authorization': 'Daily-Auth-Token']: ETokenType.EE ? `Bearer ${eeApi.token}`: eeApi.token,
-          'Content-Type': 'application/json'
+          [eeApi.type === ETokenType.EE ? 'Authorization': 'Daily-Auth-Token']: eeApi.type === ETokenType.EE ? `Bearer ${eeApi.token}`: eeApi.token,
+          'Content-Type': 'application/json',
         })
       });
       participants = (await participantsRes.json())?.participants || [];
@@ -49,18 +49,6 @@ export function PresenceListener() {
 
     setViewers(viewers);
   }, [name, participantIds, setViewers, eeApi]);
-
-
-  // useEffect(() => {
-
-  //   if (!eeApi || eeApi?.token.toString() === '') {
-  //     setEEApi({
-  //       token: params.get('eeToken') || '',
-  //       basePath: params.get('basePath') || '',
-  //     });
-  //   }
-
-  // }, [params, eeApi, setEEApi])
 
   useDailyEvent(
     'participant-counts-updated',

@@ -7,6 +7,7 @@ import { DailyProvider } from '@daily-co/daily-react';
 
 import { Loader } from '@/components/Loader';
 import { useEEApi, ETokenType } from '@/states/eeApiState';
+import { resolve } from 'path';
 
 interface DailyClientProps {
   roomName: string;
@@ -43,23 +44,14 @@ export function DailyClientProvider({
 
   useEffect(() => {
 
-    const queryToken = params.get('eeToken') || '';
-    const dailyToken = params.get('token') || '';
+    const apiToken = params.get('eeToken') || (params.get('token') || '');
+    const role = pathname.split('/').pop();
 
-    if (queryToken !== '' && !eeApi.tokenSet) {
+    if (apiToken !== '' && !eeApi.tokenSet) {
       setEEApi({
-        token: queryToken,
+        token: apiToken,
         basePath: params.get('basePath') || '',
-        type: ETokenType.EE,
-        tokenSet: true
-      });
-    }
-
-    if (dailyToken !== '' && !eeApi.tokenSet) {
-      setEEApi({
-        token: queryToken,
-        basePath: params.get('basePath') || '',
-        type: ETokenType.DAILY,
+        type: role === 'presenter' ? ETokenType.DAILY : ETokenType.EE,
         tokenSet: true
       });
     }
@@ -67,21 +59,36 @@ export function DailyClientProvider({
     const handleCreateCallObject = async () => {
 
       if (callObject || !roomName || !eeApi || !eeApi.tokenSet) return;
-      
-      const role = pathname.split('/').pop();
 
-      const joinDataResponse = await fetch(`${eeApi.basePath}join-data`, {
-        headers: new Headers({
-          [ETokenType.EE ? 'Authorization': 'Daily-Auth-Token']: ETokenType.EE ? `Bearer ${eeApi.token}`: eeApi.token,
-          'Content-Type': 'application/json'
-        })
-      });
+      let joinDataPromise: Promise<EEJoinDataResponse>;
 
-      if (!joinDataResponse.ok) {
-        return;
+      if (role === 'presenter') {
+        joinDataPromise = new Promise((resolve) => {
+          resolve({
+            token: eeApi.token,
+            url: `https://${process.env.NEXT_PUBLIC_DAILY_DOMAIN}.daily.co/${roomName}`
+          })
+        });
+      } else {
+        joinDataPromise = new Promise((resolve, react) => {
+          fetch(`${eeApi.basePath}join-data`, {
+            headers: new Headers({
+              [eeApi.type === ETokenType.EE ? 'Authorization' : 'test']: eeApi.type === ETokenType.EE ? `Bearer ${eeApi.token}` : eeApi.token,
+              'Content-Type': 'application/json',
+            })
+          }).then((joinDataResponse: Response) => {
+            if (!joinDataResponse.ok) {
+              react();
+            }
+
+            joinDataResponse.json().then((dataResponse: EEJoinDataResponse) => {
+              resolve(dataResponse);
+            })
+          });
+        });
       }
 
-      const joinData: EEJoinDataResponse = await joinDataResponse.json();
+      const joinData = await joinDataPromise;
       const url = joinData.url;
       token = joinData.token;
 
@@ -107,7 +114,7 @@ export function DailyClientProvider({
       (window as any)['callObject'] = newCallObject;
       await newCallObject.preAuth({ url, token });
 
-      if (role === 'viewer') {
+      if (['viewer', 'producer'].includes(role || '')) {
         await newCallObject.join();
       }
     };
