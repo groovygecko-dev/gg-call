@@ -44,16 +44,20 @@ export function DailyClientProvider({
 
   useEffect(() => {
 
-    const apiToken = params.get('eeToken') || (params.get('token') || '');
+    const apiToken = params.get('eeToken') || (params.get('t') || '');
     const role = pathname.split('/').pop();
 
-    if (apiToken !== '' && !eeApi.tokenSet) {
-      setEEApi({
-        token: apiToken,
-        basePath: params.get('basePath') || '',
-        type: role === 'presenter' ? ETokenType.DAILY : ETokenType.EE,
-        tokenSet: true
-      });
+    if (apiToken !== '') {
+      if (!eeApi.tokenSet) {
+        setEEApi({
+          token: apiToken,
+          basePath: params.get('basePath') || '',
+          type: role === 'presenter' ? ETokenType.DAILY : ETokenType.EE,
+          tokenSet: true
+        });
+      }
+    } else {
+      // TODO: do some fix for no token.
     }
 
     const handleCreateCallObject = async () => {
