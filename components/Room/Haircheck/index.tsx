@@ -19,7 +19,7 @@ export function Haircheck() {
 
     if (!daily) return;
     
-    setState('haircheck');
+    if (hasPresence) setState('haircheck');
 
   }, [daily, hasPresence]);
 

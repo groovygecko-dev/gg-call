@@ -115,7 +115,14 @@ export function DailyClientProvider({
       await newCallObject.preAuth({ url, token });
 
       if (['viewer', 'producer'].includes(role || '')) {
-        await newCallObject.join();
+        const userData: any = {};
+        if (role === 'producer') {
+          userData['acceptedToJoin'] = true;
+        }
+
+        await newCallObject.join({
+          userData: userData
+        });
       }
     };
 

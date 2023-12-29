@@ -433,7 +433,7 @@ export const useStage = ({
   const state: State = useMemo(() => {
     if (!hasPresence) {
       if (config?.options?.enable_viewers_request_to_join)
-        return 'request-to-join';
+        return userData?.['acceptedToJoin'] ? 'back-stage' : 'request-to-join';
       return 'viewer';
     } else {
       if (userData?.['onStage']) return 'on-stage';

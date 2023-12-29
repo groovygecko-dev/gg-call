@@ -73,9 +73,9 @@ export function Tray() {
         <Settings />
       </div>
       <div className="flex items-center justify-center">
-        <More />
-        <Invite />
-        <Leave />
+        {/* <More /> */}
+        {/* <Invite /> */}
+        {/* <Leave /> */}
       </div>
     </div>
   );
