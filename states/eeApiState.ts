@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
 
 type TeeApiRequested = {

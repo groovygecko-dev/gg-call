@@ -7,7 +7,6 @@ import { DailyProvider } from '@daily-co/daily-react';
 
 import { Loader } from '@/components/Loader';
 import { useEEApi, ETokenType } from '@/states/eeApiState';
-import { resolve } from 'path';
 
 interface DailyClientProps {
   roomName: string;
