@@ -115,6 +115,11 @@ export function ViewLayout() {
     }
   }, [meetingState, pathname]);
 
+  const isViewer = useMemo(() => {
+    const role = pathname.split('/').pop();
+    return role === 'viewer';
+  }, [pathname]);
+
   useEffect(() => {
     return () => {
       daily?.leave();
@@ -123,7 +128,7 @@ export function ViewLayout() {
 
   return (
     <div className="flex h-full max-h-[100dvh] flex-col">
-      <Header />
+      { isViewer ? '' : <Header/> }
       {content}
       <Listeners />
     </div>

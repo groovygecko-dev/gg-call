@@ -5,6 +5,7 @@ import { ReceiveSettingsListener } from '@/components/Listeners/ReceiveSettings'
 import { SendSettingsListener } from '@/components/Listeners/SendSettings';
 import { StageAppMessageListener } from '@/components/Listeners/StageAppMessageListener';
 import { SubscriptionsListener } from '@/components/Listeners/SubscriptionsListener';
+import { EEMessageListener } from './EEMessageListener';
 
 export function Listeners() {
   return (
@@ -16,6 +17,7 @@ export function Listeners() {
       <PresenceListener />
       <ReceiveSettingsListener />
       <SendSettingsListener />
+      <EEMessageListener />
     </>
   );
 }

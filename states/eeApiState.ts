@@ -1,6 +1,6 @@
 import { atom, useRecoilState } from 'recoil';
 
-type TeeApiRequested = {
+type TEEApiRequested = {
   token: string;
   type: ETokenType;
   basePath: string;
@@ -12,7 +12,7 @@ export enum ETokenType {
   DAILY = 'daily',
 }
 
-const requestedEEApiState = atom<TeeApiRequested>({
+const requestedEEApiState = atom<TEEApiRequested>({
   key: 'ee-api-state',
   default: {
     token: '',

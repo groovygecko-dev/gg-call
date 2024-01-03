@@ -18,7 +18,7 @@ export function Haircheck() {
   useEffect(() => {
 
     if (!daily) return;
-    
+
     if (hasPresence) setState('haircheck');
 
   }, [daily, hasPresence]);
@@ -28,11 +28,7 @@ export function Haircheck() {
   return (
     <div className="flex h-full w-full flex-1 items-center justify-center p-4 sm:p-0">
       <Card className="w-full sm:w-[70dvw] md:w-[50dvw] lg:w-[45dvw] xl:w-[30dvw] 2xl:w-[25dvw]">
-        {state === 'haircheck' ? (
-          <Setup />
-        ) : (
-          'Loading'
-        )}
+        {state === 'haircheck' ? <Setup /> : ''}
       </Card>
     </div>
   );
