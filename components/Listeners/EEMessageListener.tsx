@@ -38,9 +38,9 @@ export function EEMessageListener() {
     const role = pathname.split('/').pop();
 
     if (role === 'viewer') {
-      window.postMessage(
+      window.parent.postMessage(
         {
-          meetingState: meetingState,
+          meetingReady: meetingState === 'joined-meeting',
         },
         '*'
       );
