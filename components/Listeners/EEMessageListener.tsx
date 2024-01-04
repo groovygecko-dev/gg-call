@@ -2,11 +2,14 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { ETokenType, useEEApi } from '@/states/eeApiState';
 import { useMeetingState } from '@daily-co/daily-react';
+import { useStage } from '@/hooks/useStage';
 
 export function EEMessageListener() {
   const [, setEEApi] = useEEApi();
   const meetingState = useMeetingState();
   const pathname = usePathname();
+  const { state, isRequesting, requestToJoin, cancelRequestToJoin } = useStage();
+  const role = pathname.split('/').pop();
 
   useEffect(() => {
     window.addEventListener(
@@ -24,23 +27,50 @@ export function EEMessageListener() {
             tokenSet: true,
           });
         }
+
+        if (event.data.action) {
+          switch(event.data.action) {
+            case 'cancelRequestToJoin':
+              cancelRequestToJoin();
+              break;
+            case 'requestToJoin':
+              requestToJoin();
+              break;
+          }
+        }
       },
       false,
     );
-  }, [setEEApi]);
+  }, [setEEApi, cancelRequestToJoin, requestToJoin]);
 
   useEffect(() => {
-    const role = pathname.split('/').pop();
 
-    if (role === 'viewer') {
-      window.parent.postMessage(
-        {
-          meetingReady: meetingState === 'joined-meeting',
-        },
-        '*',
-      );
+    if (role !== 'viewer') {
+      return;
     }
-  }, [pathname, meetingState]);
+
+    window.parent.postMessage(
+      {
+        meetingReady: meetingState === 'joined-meeting',
+      },
+      '*',
+    );
+  }, [meetingState]);
+
+  useEffect(() => {
+
+    if (role !== 'viewer') {
+      return;
+    }
+
+    window.parent.postMessage(
+      {
+        state: state,
+        isRequesting: isRequesting,
+      },
+      '*',
+    );
+  }, [state, isRequesting]);
 
   return null;
 }
