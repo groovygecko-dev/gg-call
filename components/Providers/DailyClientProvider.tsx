@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import { ETokenType, useEEApi } from '@/states/eeApiState';
 import DailyIframe, { DailyCall } from '@daily-co/daily-js';
 import { DailyProvider } from '@daily-co/daily-react';
 
 import { Loader } from '@/components/Loader';
-import { useEEApi, ETokenType } from '@/states/eeApiState';
 
 interface DailyClientProps {
   roomName: string;
@@ -19,21 +19,19 @@ interface EEJoinDataResponse {
   token: string;
   config?: {
     bandwidth?: {
-      kbs?: number,
+      kbs?: number;
       trackConstraints?: {
-        width?: number,
-        height?: number,
-        frameRate?: number,
-      },
-    }
+        width?: number;
+        height?: number;
+        frameRate?: number;
+      };
+    };
   };
 }
 
 export function DailyClientProvider({
   roomName,
   children,
-  token = '',
-  requiresToken = false,
 }: React.PropsWithChildren<DailyClientProps>) {
   const pathname = usePathname();
   const params = useSearchParams();
@@ -42,8 +40,7 @@ export function DailyClientProvider({
   const [eeApi, setEEApi] = useEEApi();
 
   useEffect(() => {
-
-    const apiToken = params.get('eeToken') || (params.get('t') || '');
+    const apiToken = params.get('eeToken') || params.get('t') || '';
     const role = pathname.split('/').pop();
 
     if (apiToken !== '') {
@@ -52,7 +49,7 @@ export function DailyClientProvider({
           token: apiToken,
           basePath: params.get('basePath') || '',
           type: role === 'presenter' ? ETokenType.DAILY : ETokenType.EE,
-          tokenSet: true
+          tokenSet: true,
         });
       }
     } else {
@@ -60,7 +57,6 @@ export function DailyClientProvider({
     }
 
     const handleCreateCallObject = async () => {
-
       if (callObject || !roomName || !eeApi || !eeApi.tokenSet) return;
 
       let joinDataPromise: Promise<EEJoinDataResponse>;
@@ -69,16 +65,19 @@ export function DailyClientProvider({
         joinDataPromise = new Promise((resolve) => {
           resolve({
             token: eeApi.token,
-            url: `https://${process.env.NEXT_PUBLIC_DAILY_DOMAIN}.daily.co/${roomName}`
-          })
+            url: `https://${process.env.NEXT_PUBLIC_DAILY_DOMAIN}.daily.co/${roomName}`,
+          });
         });
       } else {
         joinDataPromise = new Promise((resolve, react) => {
           fetch(`${eeApi.basePath}join-data`, {
             headers: new Headers({
-              [eeApi.type === ETokenType.EE ? 'Authorization' : 'test']: eeApi.type === ETokenType.EE ? `Bearer ${eeApi.token}` : eeApi.token,
+              [eeApi.type === ETokenType.EE ? 'Authorization' : 'test']:
+                eeApi.type === ETokenType.EE
+                  ? `Bearer ${eeApi.token}`
+                  : eeApi.token,
               'Content-Type': 'application/json',
-            })
+            }),
           }).then((joinDataResponse: Response) => {
             if (!joinDataResponse.ok) {
               react();
@@ -86,14 +85,14 @@ export function DailyClientProvider({
 
             joinDataResponse.json().then((dataResponse: EEJoinDataResponse) => {
               resolve(dataResponse);
-            })
+            });
           });
         });
       }
 
       const joinData = await joinDataPromise;
       const url = joinData.url;
-      token = joinData.token;
+      const token = joinData.token;
 
       let newCallObject: DailyCall | null = null;
       try {
@@ -124,13 +123,13 @@ export function DailyClientProvider({
         }
 
         await newCallObject.join({
-          userData: userData
+          userData: userData,
         });
       }
     };
 
     handleCreateCallObject();
-  }, [callObject, requiresToken, roomName, pathname, setEEApi, eeApi, params]);
+  }, [callObject, roomName, pathname, setEEApi, eeApi, params]);
 
   if (!callObject) return <Loader />;
 

@@ -1,20 +1,17 @@
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { ETokenType, useEEApi } from '@/states/eeApiState';
 import { useMeetingState } from '@daily-co/daily-react';
-import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
 
 export function EEMessageListener() {
-
   const [, setEEApi] = useEEApi();
   const meetingState = useMeetingState();
   const pathname = usePathname();
 
   useEffect(() => {
-
     window.addEventListener(
-      "message",
+      'message',
       (event) => {
-
         if (event.origin === process.env.NEXT_PUBLIC_BASE_URL) {
           return;
         }
@@ -24,17 +21,15 @@ export function EEMessageListener() {
             token: event.data.eeToken,
             basePath: event.data.basePath,
             type: ETokenType.EE,
-            tokenSet: true
+            tokenSet: true,
           });
         }
       },
       false,
     );
-    
   }, [setEEApi]);
 
   useEffect(() => {
-
     const role = pathname.split('/').pop();
 
     if (role === 'viewer') {
@@ -42,10 +37,9 @@ export function EEMessageListener() {
         {
           meetingReady: meetingState === 'joined-meeting',
         },
-        '*'
+        '*',
       );
     }
-
   }, [pathname, meetingState]);
 
   return null;

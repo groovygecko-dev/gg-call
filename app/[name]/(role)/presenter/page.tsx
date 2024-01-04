@@ -8,7 +8,6 @@ export default async function PresenterPage({
 }: {
   params: { name: string };
 }) {
-
   return (
     <DailyClientProvider roomName={name} requiresToken>
       <ViewLayout />

@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
+import { ETokenType, useEEApi } from '@/states/eeApiState';
 import { useViewers } from '@/states/viewersState';
-import { useEEApi, ETokenType } from '@/states/eeApiState';
 import {
   DailyEventObjectParticipantCounts,
   DailyParticipant,
@@ -33,9 +33,12 @@ export function PresenceListener() {
     if (eeApi.tokenSet) {
       const participantsRes = await fetch(`${eeApi.basePath}presence`, {
         headers: new Headers({
-          [eeApi.type === ETokenType.EE ? 'Authorization': 'Daily-Auth-Token']: eeApi.type === ETokenType.EE ? `Bearer ${eeApi.token}`: eeApi.token,
+          [eeApi.type === ETokenType.EE ? 'Authorization' : 'Daily-Auth-Token']:
+            eeApi.type === ETokenType.EE
+              ? `Bearer ${eeApi.token}`
+              : eeApi.token,
           'Content-Type': 'application/json',
-        })
+        }),
       });
       participants = (await participantsRes.json())?.participants || [];
     }
@@ -48,7 +51,7 @@ export function PresenceListener() {
       }));
 
     setViewers(viewers);
-  }, [name, participantIds, setViewers, eeApi]);
+  }, [participantIds, setViewers, eeApi]);
 
   useDailyEvent(
     'participant-counts-updated',

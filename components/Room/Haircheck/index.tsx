@@ -16,11 +16,9 @@ export function Haircheck() {
   const daily = useDaily();
 
   useEffect(() => {
-
     if (!daily) return;
 
     if (hasPresence) setState('haircheck');
-
   }, [daily, hasPresence]);
 
   if (!localSessionId) return <Loader showHeader={false} />;

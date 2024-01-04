@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 import { useToast } from '@/ui/useToast';
 import {
   DailyEventObject,
@@ -16,7 +17,6 @@ import {
 import { Header } from '@/components/Header';
 import { Listeners } from '@/components/Listeners';
 import { Loader } from '@/components/Loader';
-import { usePathname } from 'next/navigation';
 import { VcsPreview } from '@/components/Room/Vcs';
 
 const Haircheck = dynamic(
@@ -95,7 +95,6 @@ export function ViewLayout() {
   );
 
   const content = useMemo(() => {
-
     const role = pathname.split('/').pop();
 
     switch (meetingState) {
@@ -128,7 +127,7 @@ export function ViewLayout() {
 
   return (
     <div className="flex h-full max-h-[100dvh] flex-col">
-      { isViewer ? '' : <Header/> }
+      {isViewer ? '' : <Header />}
       {content}
       <Listeners />
     </div>
