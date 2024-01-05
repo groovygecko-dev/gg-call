@@ -28,16 +28,6 @@ const Room = dynamic(
   { loading: () => <Loader showHeader={false} /> },
 );
 
-const VcsPreview = dynamic(
-  () => import('@/components/Room/Vcs').then((mod) => mod.VcsPreview),
-  { loading: () => <Loader showHeader={false} /> },
-);
-
-const Modals = dynamic(
-  () => import('@/components/Room/Modals').then((mod) => mod.Modals),
-  { loading: () => <Loader showHeader={false} /> },
-);
-
 const LeftMeeting = dynamic(
   () => import('@/components/Room/LeftMeeting').then((mod) => mod.LeftMeeting),
   { loading: () => <Loader showHeader={false} /> },
@@ -104,13 +94,11 @@ export function ViewLayout() {
   );
 
   const content = useMemo(() => {
-    const role = pathname.split('/').pop();
-
     switch (meetingState) {
       case 'loaded':
         return <Haircheck />;
       case 'joined-meeting':
-        return role === 'viewer' ? <VcsPreview /> : <Room />;
+        return <Room />;
       case 'left-meeting':
         return <LeftMeeting />;
       case 'error':
@@ -121,7 +109,7 @@ export function ViewLayout() {
       default:
         return <Loader showHeader={false} />;
     }
-  }, [meetingState, pathname]);
+  }, [meetingState]);
 
   const isViewer = useMemo(() => {
     const role = pathname.split('/').pop();
@@ -139,7 +127,6 @@ export function ViewLayout() {
       {isViewer ? '' : <Header />}
       {content}
       <Listeners />
-      {isViewer ? <Modals /> : ''}
     </div>
   );
 }
