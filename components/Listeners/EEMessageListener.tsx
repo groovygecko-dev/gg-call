@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { ETokenType, useEEApi } from '@/states/eeApiState';
-import { useMeetingState } from '@daily-co/daily-react';
+import { useLocalSessionId, useMeetingState } from '@daily-co/daily-react';
 import { useStage } from '@/hooks/useStage';
 
 export function EEMessageListener() {
   const [, setEEApi] = useEEApi();
   const meetingState = useMeetingState();
   const pathname = usePathname();
-  const { state, isRequesting, requestToJoin, cancelRequestToJoin } = useStage();
+  const { state, isRequesting, requestToJoin, cancelRequestToJoin, accept, deny } = useStage();
   const role = pathname.split('/').pop();
+  const localSessionId = useLocalSessionId();
 
   useEffect(() => {
     window.addEventListener(
@@ -18,6 +19,8 @@ export function EEMessageListener() {
         if (event.origin === process.env.NEXT_PUBLIC_BASE_URL) {
           return;
         }
+
+        console.log(event.data);
 
         if (event.data.eeToken && event.data.basePath) {
           setEEApi({
@@ -29,19 +32,25 @@ export function EEMessageListener() {
         }
 
         if (event.data.action) {
-          switch(event.data.action) {
-            case 'cancelRequestToJoin':
+          switch (event.data.action) {
+            case 'cancel-request-to-join':
               cancelRequestToJoin();
               break;
-            case 'requestToJoin':
+            case 'request-to-join':
               requestToJoin();
+              break;
+            case 'gg-call-accept-request-to-join':
+              accept(event.data.action.sessionId);
+              break;
+            case 'gg-call-deny-request-to-join':
+              deny(event.data.action.sessionId);
               break;
           }
         }
       },
       false,
     );
-  }, [setEEApi, cancelRequestToJoin, requestToJoin]);
+  }, [setEEApi, cancelRequestToJoin, requestToJoin, accept, deny]);
 
   useEffect(() => {
 
@@ -66,11 +75,12 @@ export function EEMessageListener() {
     window.parent.postMessage(
       {
         state: state,
+        sessionId: localSessionId,
         isRequesting: isRequesting,
       },
       '*',
     );
-  }, [state, isRequesting]);
+  }, [state, isRequesting, localSessionId]);
 
   return null;
 }

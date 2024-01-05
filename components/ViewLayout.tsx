@@ -17,7 +17,6 @@ import {
 import { Header } from '@/components/Header';
 import { Listeners } from '@/components/Listeners';
 import { Loader } from '@/components/Loader';
-import { VcsPreview } from '@/components/Room/Vcs';
 
 const Haircheck = dynamic(
   () => import('@/components/Room/Haircheck').then((mod) => mod.Haircheck),
@@ -26,6 +25,16 @@ const Haircheck = dynamic(
 
 const Room = dynamic(
   () => import('@/components/Room').then((mod) => mod.Room),
+  { loading: () => <Loader showHeader={false} /> },
+);
+
+const VcsPreview = dynamic(
+  () => import('@/components/Room/Vcs').then((mod) => mod.VcsPreview),
+  { loading: () => <Loader showHeader={false} /> },
+);
+
+const Modals = dynamic(
+  () => import('@/components/Room/Modals').then((mod) => mod.Modals),
   { loading: () => <Loader showHeader={false} /> },
 );
 
@@ -130,6 +139,7 @@ export function ViewLayout() {
       {isViewer ? '' : <Header />}
       {content}
       <Listeners />
+      {isViewer ? <Modals /> : ''}
     </div>
   );
 }

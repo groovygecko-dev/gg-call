@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { ETokenType, useEEApi } from '@/states/eeApiState';
 import { useViewers } from '@/states/viewersState';
 import {
@@ -19,13 +19,30 @@ export function PresenceListener() {
   const { name } = useParams();
   const isOwner = useIsOwner();
   const params = useSearchParams();
+  const pathname = usePathname();
 
   const participantIds = useParticipantIds({
     filter: useCallback((p: DailyParticipant) => p.permissions.hasPresence, []),
   });
 
   const [, setViewers] = useViewers();
-  const [eeApi] = useEEApi();
+  const [eeApi, setEEApi] = useEEApi();
+
+  useEffect(() => {
+    const apiToken = params.get('eeToken') || params.get('t') || '';
+    const role = pathname.split('/').pop();
+
+    if (apiToken !== '') {
+      if (!eeApi.tokenSet) {
+        setEEApi({
+          token: apiToken,
+          basePath: params.get('basePath') || '',
+          type: role === 'presenter' ? ETokenType.DAILY : ETokenType.EE,
+          tokenSet: true,
+        });
+      }
+    }
+  }, [eeApi, setEEApi]);
 
   const fetchParticipants = useCallback(async () => {
     let participants: Participant[] = [];
