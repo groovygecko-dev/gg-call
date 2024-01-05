@@ -116,15 +116,28 @@ export function DailyClientProvider({
       (window as any)['callObject'] = newCallObject;
       await newCallObject.preAuth({ url, token });
 
-      if (['viewer', 'producer'].includes(role || '')) {
-        const userData: any = {};
-        if (role === 'producer') {
-          userData['acceptedToJoin'] = true;
-        }
+      switch (role) {
+        case 'viewer':
+          await newCallObject.join({});
 
-        await newCallObject.join({
-          userData: userData,
-        });
+          newCallObject.loadCss({
+            bodyClass: 'h-full font-sans antialiased viewer-layout',
+            cssText:
+              '.viewer-layout, .viewer-layout .LiveFeed {background-color: transparent}',
+          });
+
+          if (joinData?.config?.bandwidth) {
+            newCallObject.setBandwidth(joinData.config.bandwidth);
+          }
+          break;
+
+        case 'producer':
+          await newCallObject.join({
+            userData: {
+              acceptedToJoin: true,
+            },
+          });
+          break;
       }
     };
 
