@@ -42,7 +42,7 @@ export function PresenceListener() {
         });
       }
     }
-  }, [eeApi, setEEApi]);
+  }, [eeApi, setEEApi, params, pathname]);
 
   const fetchParticipants = useCallback(async () => {
     let participants: Participant[] = [];

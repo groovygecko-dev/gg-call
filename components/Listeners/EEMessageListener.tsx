@@ -2,13 +2,21 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { ETokenType, useEEApi } from '@/states/eeApiState';
 import { useLocalSessionId, useMeetingState } from '@daily-co/daily-react';
+
 import { useStage } from '@/hooks/useStage';
 
 export function EEMessageListener() {
   const [, setEEApi] = useEEApi();
   const meetingState = useMeetingState();
   const pathname = usePathname();
-  const { state, isRequesting, requestToJoin, cancelRequestToJoin, accept, deny } = useStage();
+  const {
+    state,
+    isRequesting,
+    requestToJoin,
+    cancelRequestToJoin,
+    accept,
+    deny,
+  } = useStage();
   const role = pathname.split('/').pop();
   const localSessionId = useLocalSessionId();
 
@@ -53,7 +61,6 @@ export function EEMessageListener() {
   }, [setEEApi, cancelRequestToJoin, requestToJoin, accept, deny]);
 
   useEffect(() => {
-
     if (role !== 'viewer') {
       return;
     }
@@ -64,10 +71,9 @@ export function EEMessageListener() {
       },
       '*',
     );
-  }, [meetingState]);
+  }, [role, meetingState]);
 
   useEffect(() => {
-
     if (role !== 'viewer') {
       return;
     }
@@ -80,7 +86,7 @@ export function EEMessageListener() {
       },
       '*',
     );
-  }, [state, isRequesting, localSessionId]);
+  }, [role, state, isRequesting, localSessionId]);
 
   return null;
 }
