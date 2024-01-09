@@ -66,6 +66,16 @@ export function DailyClientProvider({
           resolve({
             token: eeApi.token,
             url: `https://${process.env.NEXT_PUBLIC_DAILY_DOMAIN}.daily.co/${roomName}`,
+            config: {
+              bandwidth: {
+                kbs: 4000,
+                trackConstraints: {
+                  width: 1280,
+                  height: 720,
+                  frameRate: 25
+                }
+              }
+            }
           });
         });
       } else {
@@ -126,9 +136,6 @@ export function DailyClientProvider({
               '.viewer-layout, .viewer-layout .LiveFeed {background-color: transparent}',
           });
 
-          if (joinData?.config?.bandwidth) {
-            newCallObject.setBandwidth(joinData.config.bandwidth);
-          }
           break;
 
         case 'producer':
@@ -137,6 +144,11 @@ export function DailyClientProvider({
               acceptedToJoin: true,
             },
           });
+
+          if (joinData?.config?.bandwidth) {
+            newCallObject.setBandwidth(joinData.config.bandwidth);
+          }
+
           break;
       }
     };
