@@ -66,6 +66,16 @@ export function DailyClientProvider({
           resolve({
             token: eeApi.token,
             url: `https://${process.env.NEXT_PUBLIC_DAILY_DOMAIN}.daily.co/${roomName}`,
+            config: {
+              bandwidth: {
+                kbs: 4000,
+                trackConstraints: {
+                  width: 640,
+                  height: 360,
+                  frameRate: 25,
+                },
+              },
+            },
           });
         });
       } else {
