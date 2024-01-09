@@ -72,10 +72,10 @@ export function DailyClientProvider({
                 trackConstraints: {
                   width: 1280,
                   height: 720,
-                  frameRate: 25
-                }
-              }
-            }
+                  frameRate: 25,
+                },
+              },
+            },
           });
         });
       } else {
