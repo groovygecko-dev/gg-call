@@ -59,43 +59,25 @@ export function DailyClientProvider({
     const handleCreateCallObject = async () => {
       if (callObject || !roomName || !eeApi || !eeApi.tokenSet) return;
 
-      let joinDataPromise: Promise<EEJoinDataResponse>;
-
-      if (role === 'presenter') {
-        joinDataPromise = new Promise((resolve) => {
-          resolve({
-            token: eeApi.token,
-            url: `https://${process.env.NEXT_PUBLIC_DAILY_DOMAIN}.daily.co/${roomName}`,
-            config: {
-              bandwidth: {
-                kbs: 4000,
-                trackConstraints: {
-                  width: 1280,
-                  height: 720,
-                  frameRate: 25,
-                },
-              },
-            },
-          });
-        });
-      } else {
-        joinDataPromise = new Promise((resolve, react) => {
+      const joinDataPromise: Promise<EEJoinDataResponse> = new Promise(
+        (resolve, reject) => {
           fetch(`${eeApi.basePath}join-data`, {
             headers: new Headers({
-              Authorization: `Bearer ${eeApi.token}`,
+              [role === 'presenter' ? 'Daily-Auth-Token' : 'Authorization']:
+                role === 'presenter' ? eeApi.token : `Bearer ${eeApi.token}`,
               'Content-Type': 'application/json',
             }),
           }).then((joinDataResponse: Response) => {
             if (!joinDataResponse.ok) {
-              react();
+              reject();
             }
 
             joinDataResponse.json().then((dataResponse: EEJoinDataResponse) => {
               resolve(dataResponse);
             });
           });
-        });
-      }
+        },
+      );
 
       const joinData = await joinDataPromise;
       const url = joinData.url;
