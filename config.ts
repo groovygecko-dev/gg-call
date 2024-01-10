@@ -1,7 +1,7 @@
 export const config = {
-  name: 'Daily Studio',
+  name: '',
   description:
-    "Create a custom live and recorded experience with Daily's Video Component System (VCS) and Interactive Live Streaming (ILS)",
+    "",
   githubLink: 'https://github.com/daily-solutions/vcs-studio',
   theme: {
     background: 'hsl(0 0% 100%)',
@@ -72,7 +72,7 @@ export const config = {
     /**
      * Enable network UI
      */
-    enable_network_ui: true,
+    enable_network_ui: false,
     /**
      * Available layout modes
      */

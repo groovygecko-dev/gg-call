@@ -28,8 +28,6 @@ export function EEMessageListener() {
           return;
         }
 
-        console.log(event.data);
-
         if (event.data.eeToken && event.data.basePath) {
           setEEApi({
             token: event.data.eeToken,
