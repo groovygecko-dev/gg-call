@@ -103,38 +103,28 @@ export function DailyClientProvider({
 
       let newCallObject: DailyCall | null = null;
 
-      console.log({
-        ...joinData.config?.bandwidth?.trackConstraints,
-        ...{
-          frameRate: joinData.config?.bandwidth?.trackConstraints?.frameRate,
-        },
-      });
-
       try {
         newCallObject = DailyIframe.createCallObject({
           url,
           token,
           strictMode: true,
           sendSettings: {
-            video:
-              role === 'producer'
-                ? 'quality-optimized'
-                : {
-                    encodings: {
-                      low: {
-                        maxBitrate: 1000,
-                        scaleResolutionDownBy: 6,
-                      },
-                      medium: {
-                        maxBitrate: 3000,
-                        scaleResolutionDownBy: 2,
-                      },
-                      high: {
-                        maxBitrate: joinData.config?.bandwidth?.kbs,
-                        scaleResolutionDownBy: 1,
-                      },
-                    },
-                  },
+            video: {
+              encodings: {
+                low: {
+                  maxBitrate: 1000,
+                  scaleResolutionDownBy: 6,
+                },
+                medium: {
+                  maxBitrate: 3000,
+                  scaleResolutionDownBy: 2,
+                },
+                high: {
+                  maxBitrate: joinData.config?.bandwidth?.kbs,
+                  scaleResolutionDownBy: 1,
+                },
+              },
+            },
           },
           dailyConfig: {
             useDevicePreferenceCookies: true,
@@ -144,14 +134,11 @@ export function DailyClientProvider({
           subscribeToTracksAutomatically: false,
         });
 
-        if (role !== 'producer') {
-          console.log('set quality to high');
-          await newCallObject.updateSendSettings({
-            video: {
-              maxQuality: 'high',
-            },
-          });
-        }
+        await newCallObject.updateSendSettings({
+          video: {
+            maxQuality: 'high',
+          },
+        });
       } catch {
         newCallObject = DailyIframe.getCallInstance();
       }
