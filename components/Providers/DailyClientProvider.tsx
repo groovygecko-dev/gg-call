@@ -70,8 +70,8 @@ export function DailyClientProvider({
               bandwidth: {
                 kbs: 4000,
                 trackConstraints: {
-                  width: 640,
-                  height: 360,
+                  width: 1280,
+                  height: 720,
                   frameRate: 25,
                 },
               },
@@ -82,10 +82,7 @@ export function DailyClientProvider({
         joinDataPromise = new Promise((resolve, react) => {
           fetch(`${eeApi.basePath}join-data`, {
             headers: new Headers({
-              [eeApi.type === ETokenType.EE ? 'Authorization' : 'test']:
-                eeApi.type === ETokenType.EE
-                  ? `Bearer ${eeApi.token}`
-                  : eeApi.token,
+              Authorization: `Bearer ${eeApi.token}`,
               'Content-Type': 'application/json',
             }),
           }).then((joinDataResponse: Response) => {
@@ -105,19 +102,56 @@ export function DailyClientProvider({
       const token = joinData.token;
 
       let newCallObject: DailyCall | null = null;
+
+      console.log({
+        ...joinData.config?.bandwidth?.trackConstraints,
+        ...{
+          frameRate: joinData.config?.bandwidth?.trackConstraints?.frameRate,
+        },
+      });
+
       try {
         newCallObject = DailyIframe.createCallObject({
           url,
           token,
           strictMode: true,
           sendSettings: {
-            video: role === 'producer' ? 'quality-optimized' : 'default-video',
+            video:
+              role === 'producer'
+                ? 'quality-optimized'
+                : {
+                    encodings: {
+                      low: {
+                        maxBitrate: 1000,
+                        scaleResolutionDownBy: 6,
+                      },
+                      medium: {
+                        maxBitrate: 3000,
+                        scaleResolutionDownBy: 2,
+                      },
+                      high: {
+                        maxBitrate: joinData.config?.bandwidth?.kbs,
+                        scaleResolutionDownBy: 1,
+                      },
+                    },
+                  },
           },
           dailyConfig: {
             useDevicePreferenceCookies: true,
+            userMediaVideoConstraints:
+              joinData.config?.bandwidth?.trackConstraints,
           },
           subscribeToTracksAutomatically: false,
         });
+
+        if (role !== 'producer') {
+          console.log('set quality to high');
+          await newCallObject.updateSendSettings({
+            video: {
+              maxQuality: 'high',
+            },
+          });
+        }
       } catch {
         newCallObject = DailyIframe.getCallInstance();
       }
