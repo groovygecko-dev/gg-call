@@ -104,7 +104,7 @@ export function DailyClientProvider({
         });
 
         await newCallObject.updateReceiveSettings({
-          base: { video: { layer: 3 } },
+          base: { video: { layer: 2 } },
         });
       } catch {
         newCallObject = DailyIframe.getCallInstance();
