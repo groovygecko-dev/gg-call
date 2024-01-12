@@ -91,9 +91,7 @@ export function DailyClientProvider({
           token,
           strictMode: true,
           sendSettings: {
-            video: ['producer', 'presenter'].includes(role || '')
-              ? 'quality-optimized'
-              : 'default-video',
+            video: 'quality-optimized',
           },
           dailyConfig: {
             useDevicePreferenceCookies: true,
@@ -103,9 +101,8 @@ export function DailyClientProvider({
           subscribeToTracksAutomatically: false,
         });
 
-        await newCallObject.updateReceiveSettings({
-          '*': { video: { layer: 2 } },
-          base: { video: { layer: 2 } },
+        await newCallObject.updateSendSettings({
+          video: 'quality-optimized'
         });
       } catch {
         newCallObject = DailyIframe.getCallInstance();
