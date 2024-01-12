@@ -104,6 +104,7 @@ export function DailyClientProvider({
         });
 
         await newCallObject.updateReceiveSettings({
+          '*': { video: { layer: 2 } },
           base: { video: { layer: 2 } },
         });
       } catch {
