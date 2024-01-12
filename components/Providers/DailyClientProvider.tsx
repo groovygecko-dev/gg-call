@@ -91,22 +91,9 @@ export function DailyClientProvider({
           token,
           strictMode: true,
           sendSettings: {
-            video: {
-              encodings: {
-                low: {
-                  maxBitrate: 1000,
-                  scaleResolutionDownBy: 6,
-                },
-                medium: {
-                  maxBitrate: 3000,
-                  scaleResolutionDownBy: 2,
-                },
-                high: {
-                  maxBitrate: joinData.config?.bandwidth?.kbs,
-                  scaleResolutionDownBy: 1,
-                },
-              },
-            },
+            video: ['producer', 'presenter'].includes(role || '')
+              ? 'quality-optimized'
+              : 'default-video',
           },
           dailyConfig: {
             useDevicePreferenceCookies: true,
@@ -116,10 +103,8 @@ export function DailyClientProvider({
           subscribeToTracksAutomatically: false,
         });
 
-        await newCallObject.updateSendSettings({
-          video: {
-            maxQuality: 'high',
-          },
+        await newCallObject.updateReceiveSettings({
+          base: { video: { layer: 3 } },
         });
       } catch {
         newCallObject = DailyIframe.getCallInstance();
