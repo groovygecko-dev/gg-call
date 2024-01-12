@@ -3,7 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { ETokenType, useEEApi } from '@/states/eeApiState';
-import DailyIframe, { DailyCall } from '@daily-co/daily-js';
+import DailyIframe, {
+  DailyCall,
+  DailyEventObjectNetworkQualityEvent,
+  DailyReceiveSettings,
+  DailySingleParticipantReceiveSettings,
+} from '@daily-co/daily-js';
 import { DailyProvider } from '@daily-co/daily-react';
 
 import { Loader } from '@/components/Loader';
@@ -95,8 +100,6 @@ export function DailyClientProvider({
           },
           dailyConfig: {
             useDevicePreferenceCookies: true,
-            userMediaVideoConstraints:
-              joinData.config?.bandwidth?.trackConstraints,
           },
           subscribeToTracksAutomatically: false,
         });
@@ -104,6 +107,29 @@ export function DailyClientProvider({
         await newCallObject.updateSendSettings({
           video: 'quality-optimized',
         });
+
+        newCallObject.on(
+          'network-quality-change',
+          (event: DailyEventObjectNetworkQualityEvent | undefined) => {
+            console.log('Quality: ' + event?.quality);
+            console.log('Threshold: ' + event?.threshold);
+            console.log(
+              'Topology: ' + newCallObject?.meetingSessionState()?.topology,
+            );
+
+            newCallObject
+              ?.getReceiveSettings()
+              .then((data: DailyReceiveSettings) => {
+                for (var i in data) {
+                  const row: DailySingleParticipantReceiveSettings = data[i];
+                  console.log(`${i} - Video Layer: ` + row?.video?.layer);
+                  console.log(
+                    `${i} - ScreenVideo Layer: ` + row?.screenVideo?.layer,
+                  );
+                }
+              });
+          },
+        );
       } catch {
         newCallObject = DailyIframe.getCallInstance();
       }
@@ -130,10 +156,6 @@ export function DailyClientProvider({
               acceptedToJoin: true,
             },
           });
-
-          if (joinData?.config?.bandwidth) {
-            newCallObject.setBandwidth(joinData.config.bandwidth);
-          }
 
           break;
       }
