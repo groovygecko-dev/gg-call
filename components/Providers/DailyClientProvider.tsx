@@ -102,7 +102,7 @@ export function DailyClientProvider({
         });
 
         await newCallObject.updateSendSettings({
-          video: 'quality-optimized'
+          video: 'quality-optimized',
         });
       } catch {
         newCallObject = DailyIframe.getCallInstance();
