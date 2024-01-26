@@ -28,7 +28,7 @@ export function Room() {
       return ['on-stage', 'back-stage'].includes(state);
     }
 
-    return false;
+    return true;
   }, [state, role]);
 
   return (
