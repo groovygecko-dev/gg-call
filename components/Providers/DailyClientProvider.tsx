@@ -6,6 +6,7 @@ import { ETokenType, useEEApi } from '@/states/eeApiState';
 import DailyIframe, {
   DailyCall,
   DailyEventObjectNetworkQualityEvent,
+  DailyMeetingSession,
   DailyReceiveSettings,
   DailySingleParticipantReceiveSettings,
 } from '@daily-co/daily-js';
@@ -117,17 +118,32 @@ export function DailyClientProvider({
               'Topology: ' + newCallObject?.meetingSessionState()?.topology,
             );
 
-            newCallObject
-              ?.getReceiveSettings()
-              .then((data: DailyReceiveSettings) => {
-                for (var i in data) {
-                  const row: DailySingleParticipantReceiveSettings = data[i];
-                  console.log(`${i} - Video Layer: ` + row?.video?.layer);
-                  console.log(
-                    `${i} - ScreenVideo Layer: ` + row?.screenVideo?.layer,
-                  );
-                }
-              });
+            if (newCallObject) {
+              newCallObject
+                .getMeetingSession()
+                .then(
+                  (meetingSessionData: {
+                    meetingSession: DailyMeetingSession;
+                  }) => {
+                    console.log(
+                      'Meeting Session ID: ' +
+                        meetingSessionData.meetingSession.id,
+                    );
+                  },
+                );
+
+              newCallObject
+                .getReceiveSettings()
+                .then((data: DailyReceiveSettings) => {
+                  for (var i in data) {
+                    const row: DailySingleParticipantReceiveSettings = data[i];
+                    console.log(`${i} - Video Layer: ` + row?.video?.layer);
+                    console.log(
+                      `${i} - ScreenVideo Layer: ` + row?.screenVideo?.layer,
+                    );
+                  }
+                });
+            }
           },
         );
       } catch {
