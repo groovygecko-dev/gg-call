@@ -231,7 +231,7 @@
   resolved "https://registry.yarnpkg.com/@daily-co/daily-vcs-web/-/daily-vcs-web-0.0.1-alpha.9.tgz#6da9ac6d52149c83757ecc7026076e6ffdf57f26"
   integrity sha512-0IzS/zNn/isFBw2+iE+0YyEHKWha/OnfKYKp1F1KqmN/ev3o1/hEZGmtMV/lNLJeesR+5R/nEU58yxSxZiHz2w==
 
-"@daily-co/vcs-composition-daily-baseline-web@^0.1.8":
+"@daily-co/vcs-composition-daily-baseline-web@^0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@daily-co/vcs-composition-daily-baseline-web/-/vcs-composition-daily-baseline-web-0.1.9.tgz#43bdd8a39ae594cc1ca517d0e80cc86abc06d658"
   integrity sha512-ZJGQZr6h2cs4Z8tKlbyBP0tdR7dlN/f2Y1vwtNFdAFCaoNc0eWkzgEQeC4oA/F2JHcUfP7WUQNW5jSH1Cz2I1w==
