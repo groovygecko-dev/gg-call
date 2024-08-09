@@ -97,7 +97,7 @@ export function DailyClientProvider({
           token,
           strictMode: true,
           sendSettings: {
-            video: 'quality-optimized',
+            // video: 'quality-optimized',
           },
           dailyConfig: {
             useDevicePreferenceCookies: true,
@@ -105,9 +105,9 @@ export function DailyClientProvider({
           subscribeToTracksAutomatically: false,
         });
 
-        await newCallObject.updateSendSettings({
-          video: 'quality-optimized',
-        });
+        // await newCallObject.updateSendSettings({
+          // video: 'quality-optimized',
+        // });
 
         newCallObject.on(
           'network-quality-change',
