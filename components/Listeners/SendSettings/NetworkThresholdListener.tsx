@@ -34,8 +34,8 @@ export function NetworkThresholdListener() {
                     layerBasedOnNetwork: hasVeryLowThreshold
                       ? VIDEO_QUALITY_LAYERS.LOW
                       : hasLowThreshold
-                      ? VIDEO_QUALITY_LAYERS.MEDIUM
-                      : VIDEO_QUALITY_LAYERS.HIGH,
+                        ? VIDEO_QUALITY_LAYERS.MEDIUM
+                        : VIDEO_QUALITY_LAYERS.HIGH,
                   },
                 };
               });
