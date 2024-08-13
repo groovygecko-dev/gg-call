@@ -90,7 +90,7 @@ export const useLiveStream = () => {
     );
 
     const areParticipantsEqual = dequal(
-      (layout as DailyUpdateStreamingCustomLayoutConfig).video,
+      (layout as DailyUpdateStreamingCustomLayoutConfig).participants?.video,
       participantIds,
     );
 
