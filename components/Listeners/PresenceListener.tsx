@@ -48,16 +48,22 @@ export function PresenceListener() {
     let participants: Participant[] = [];
 
     if (eeApi.tokenSet) {
-      const participantsRes = await fetch(`${eeApi.basePath}presence`, {
-        headers: new Headers({
-          [eeApi.type === ETokenType.EE ? 'Authorization' : 'Daily-Auth-Token']:
-            eeApi.type === ETokenType.EE
-              ? `Bearer ${eeApi.token}`
-              : eeApi.token,
-          'Content-Type': 'application/json',
-        }),
-      });
-      participants = (await participantsRes.json())?.participants || [];
+      try {
+        const participantsRes = await fetch(`${eeApi.basePath}presence`, {
+          headers: new Headers({
+            [eeApi.type === ETokenType.EE
+              ? 'Authorization'
+              : 'Daily-Auth-Token']:
+              eeApi.type === ETokenType.EE
+                ? `Bearer ${eeApi.token}`
+                : eeApi.token,
+            'Content-Type': 'application/json',
+          }),
+        });
+        participants = (await participantsRes.json())?.participants || [];
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     const viewers = participants
