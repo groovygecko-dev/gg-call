@@ -41,8 +41,8 @@ export function ModerationMenu({ sessionId }: { sessionId: string }) {
         device === 'audio'
           ? { setAudio: false }
           : device === 'screen'
-            ? { setScreenShare: false }
-            : { setVideo: false };
+          ? { setScreenShare: false }
+          : { setVideo: false };
       daily.updateParticipant(sessionId, updates);
     },
     [daily, isLocal, sessionId],

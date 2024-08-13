@@ -29,8 +29,8 @@ export function StatusBadge() {
           {isOnStage
             ? 'You are on stage'
             : isOwner
-              ? 'You are not on stage'
-              : 'Waiting for host to bring you on stage'}
+            ? 'You are not on stage'
+            : 'Waiting for host to bring you on stage'}
         </Badge>
       )}
       {isLiveStreaming && <Badge className="px-2 py-1">Live</Badge>}

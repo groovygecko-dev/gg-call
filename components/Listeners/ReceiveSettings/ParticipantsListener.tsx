@@ -14,8 +14,8 @@ export function ParticipantsListener() {
       participantCount < 5
         ? VIDEO_QUALITY_LAYERS.HIGH
         : participantCount < 10
-          ? VIDEO_QUALITY_LAYERS.MEDIUM
-          : VIDEO_QUALITY_LAYERS.LOW;
+        ? VIDEO_QUALITY_LAYERS.MEDIUM
+        : VIDEO_QUALITY_LAYERS.LOW;
 
     setVideoLayer((prev) => {
       return {
