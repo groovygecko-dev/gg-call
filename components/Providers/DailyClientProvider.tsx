@@ -6,7 +6,7 @@ import { ETokenType, useEEApi } from '@/states/eeApiState';
 import DailyIframe, {
   DailyCall,
   DailyEventObjectNetworkQualityEvent,
-  DailyMeetingSession,
+  DailyMeetingSessionSummary,
   DailyReceiveSettings,
   DailySingleParticipantReceiveSettings,
 } from '@daily-co/daily-js';
@@ -89,7 +89,7 @@ export function DailyClientProvider({
       const url = joinData.url;
       const token = joinData.token;
 
-      let newCallObject: DailyCall | null = null;
+      let newCallObject: DailyCall | undefined = undefined;
 
       try {
         newCallObject = DailyIframe.createCallObject({
@@ -127,7 +127,7 @@ export function DailyClientProvider({
                 .getMeetingSession()
                 .then(
                   (meetingSessionData: {
-                    meetingSession: DailyMeetingSession;
+                    meetingSession: DailyMeetingSessionSummary;
                   }) => {
                     console.log(
                       'Meeting Session ID: ' +
@@ -153,6 +153,11 @@ export function DailyClientProvider({
       } catch {
         newCallObject = DailyIframe.getCallInstance();
       }
+
+      if (!newCallObject) {
+        return;
+      }
+
       setCallObject(newCallObject);
       // attach callObject to window
       (window as any)['callObject'] = newCallObject;
