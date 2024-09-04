@@ -1,6 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { usePathname } from 'next/navigation';
-import { DailyAudio } from '@daily-co/daily-react';
+import { useControlsState } from '@/states/controlsState';
+import { DailyAudio, useThrottledDailyEvent } from '@daily-co/daily-react';
 import { DailyAudioHandle } from '@daily-co/daily-react/dist/components/DailyAudio';
 
 import { useStage } from '@/hooks/useStage';
@@ -18,10 +25,56 @@ export function Room() {
   const [role, setRole] = useState<string>('');
   const { state } = useStage();
   const dailyAudioRef = useRef<DailyAudioHandle>(null);
+  const [dailyAudiosState, setControlsState] = useControlsState();
 
   useEffect(() => {
     setRole(pathname.split('/').pop() || '');
   }, [pathname, setRole]);
+
+  const setAudios = useCallback(() => {
+    if (!dailyAudiosState) {
+      return;
+    }
+
+    if (dailyAudioRef?.current) {
+      setTimeout(() => {
+        const audios = dailyAudioRef?.current?.getAllAudio() || [];
+        console.log(audios);
+
+        if (audios.length > 0) {
+          audios.forEach((audio: HTMLAudioElement) => {
+            audio.muted = dailyAudiosState.muted;
+            console.log(audio.muted);
+          });
+        }
+
+        setControlsState({
+          ...dailyAudiosState,
+          audios: dailyAudioRef?.current?.getAllAudio() || [],
+        });
+      });
+    }
+  }, [dailyAudiosState, setControlsState]);
+
+  useThrottledDailyEvent(
+    ['active-speaker-change', 'track-started', 'participant-left'],
+    useCallback(
+      (evts) => {
+        evts.forEach((ev) => {
+          console.log(ev);
+          switch (ev.action) {
+            case 'active-speaker-change':
+            case 'track-started':
+            case 'participant-left':
+              setAudios();
+              break;
+          }
+        });
+      },
+      [setAudios],
+    ),
+    200,
+  );
 
   const hasTray = useMemo(() => {
     if (role === 'presenter') {

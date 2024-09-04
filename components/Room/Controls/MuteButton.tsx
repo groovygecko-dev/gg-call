@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useControlsState } from '@/states/controlsState';
 import { Button } from '@/ui/Button';
 import { Icons } from '@/ui/Icons';
 import { DailyAudioHandle } from '@daily-co/daily-react/dist/components/DailyAudio';
@@ -8,15 +9,17 @@ export function MuteButton({
 }: {
   dailyAudioRef: DailyAudioHandle;
 }) {
-  const [muted, setMuted] = useState<boolean>(false);
+  const [controlsState, setControlsState] = useControlsState();
 
   const handleOnClick = useCallback(() => {
-    const isMuted = !muted;
-    dailyAudioRef?.getAllAudio().forEach((audio: HTMLAudioElement) => {
-      audio.muted = isMuted;
+    if (!controlsState) return;
+
+    const isMuted = !controlsState.muted;
+    setControlsState({
+      ...controlsState,
+      muted: isMuted,
     });
-    setMuted(isMuted);
-  }, [muted, setMuted, dailyAudioRef]);
+  }, [controlsState, setControlsState]);
 
   return (
     <>
@@ -26,7 +29,7 @@ export function MuteButton({
         className="w-9 px-0"
         onClick={handleOnClick}
       >
-        {muted ? <Icons.volume2 /> : <Icons.volumeX />}
+        {controlsState.muted ? <Icons.volume2 /> : <Icons.volumeX />}
       </Button>
     </>
   );
