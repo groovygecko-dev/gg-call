@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { DailyAudio } from '@daily-co/daily-react';
+import { DailyAudioHandle } from '@daily-co/daily-react/dist/components/DailyAudio';
 
 import { useStage } from '@/hooks/useStage';
 import { Modals } from '@/components/Room/Modals';
@@ -10,10 +11,13 @@ import { Tray } from '@/components/Room/Tray';
 import { LayoutSwitchMenu } from '@/components/Room/Tray/LayoutSwitchMenu';
 import { VcsPreview } from '@/components/Room/Vcs';
 
+import { Controls } from './Controls';
+
 export function Room() {
   const pathname = usePathname();
   const [role, setRole] = useState<string>('');
   const { state } = useStage();
+  const dailyAudioRef = useRef<DailyAudioHandle>(null);
 
   useEffect(() => {
     setRole(pathname.split('/').pop() || '');
@@ -36,6 +40,11 @@ export function Room() {
       <div className="flex h-full">
         <div className="relative flex w-full flex-1 flex-col md:w-[calc(100%-400px)]">
           <VcsPreview />
+          {role === 'viewer' && dailyAudioRef?.current ? (
+            <Controls dailyAudioRef={dailyAudioRef.current} />
+          ) : (
+            ''
+          )}
           {role !== 'viewer' ? <LayoutSwitchMenu /> : ''}
           {role === 'producer' ? <Stage /> : ''}
           {hasTray ? <Tray /> : ''}
@@ -43,7 +52,7 @@ export function Room() {
         {role !== 'viewer' ? <Sidebar /> : ''}
       </div>
       <Modals />
-      <DailyAudio autoSubscribeActiveSpeaker />
+      <DailyAudio autoSubscribeActiveSpeaker ref={dailyAudioRef} />
     </div>
   );
 }

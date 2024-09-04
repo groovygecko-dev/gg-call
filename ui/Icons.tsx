@@ -44,6 +44,8 @@ import {
   Users,
   Video,
   VideoOff,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 export const Icons = {
@@ -89,6 +91,8 @@ export const Icons = {
   moon: Moon,
   laptop: Laptop,
   menu: Menu,
+  volume2: Volume2,
+  volumeX: VolumeX,
   dominant: (props: LucideProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
