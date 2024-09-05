@@ -31,6 +31,17 @@ export function Room() {
     setRole(pathname.split('/').pop() || '');
   }, [pathname, setRole]);
 
+  useEffect(() => {
+    if (dailyAudiosState.audios.length > 0) {
+      dailyAudiosState.audios.forEach((audio: HTMLAudioElement) => {
+        audio.muted = dailyAudiosState.muted;
+        if (!dailyAudiosState.muted) {
+          audio.volume = dailyAudiosState.volume;
+        }
+      });
+    }
+  }, [dailyAudiosState]);
+
   const setAudios = useCallback(() => {
     if (!dailyAudiosState) {
       return;
@@ -38,16 +49,6 @@ export function Room() {
 
     if (dailyAudioRef?.current) {
       setTimeout(() => {
-        const audios = dailyAudioRef?.current?.getAllAudio() || [];
-        console.log(audios);
-
-        if (audios.length > 0) {
-          audios.forEach((audio: HTMLAudioElement) => {
-            audio.muted = dailyAudiosState.muted;
-            console.log(audio.muted);
-          });
-        }
-
         setControlsState({
           ...dailyAudiosState,
           audios: dailyAudioRef?.current?.getAllAudio() || [],
@@ -94,7 +95,7 @@ export function Room() {
         <div className="relative flex w-full flex-1 flex-col md:w-[calc(100%-400px)]">
           <VcsPreview />
           {role === 'viewer' && dailyAudioRef?.current ? (
-            <Controls dailyAudioRef={dailyAudioRef.current} />
+            <Controls />
           ) : (
             ''
           )}

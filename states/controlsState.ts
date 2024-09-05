@@ -16,10 +16,3 @@ const controlsState = atom<TControlsState>({
 });
 
 export const useControlsState = () => useRecoilState(controlsState);
-
-// const dailyAudioHandle = atom<HTMLAudioElement[]>({
-//   key: 'audio-element-state',
-//   default: [],
-// });
-
-// export const useDailyAudiosState = () => useRecoilState(dailyAudioHandle);
