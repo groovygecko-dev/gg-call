@@ -6,8 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { usePathname } from 'next/navigation';
-import { useControlsState } from '@/states/controlsState';
-import { DailyAudio, useThrottledDailyEvent } from '@daily-co/daily-react';
+import { DailyAudio } from '@daily-co/daily-react';
 import { DailyAudioHandle } from '@daily-co/daily-react/dist/components/DailyAudio';
 
 import { useStage } from '@/hooks/useStage';
@@ -25,57 +24,10 @@ export function Room() {
   const [role, setRole] = useState<string>('');
   const { state } = useStage();
   const dailyAudioRef = useRef<DailyAudioHandle>(null);
-  const [dailyAudiosState, setControlsState] = useControlsState();
 
   useEffect(() => {
     setRole(pathname.split('/').pop() || '');
   }, [pathname, setRole]);
-
-  useEffect(() => {
-    if (dailyAudiosState.audios.length > 0) {
-      dailyAudiosState.audios.forEach((audio: HTMLAudioElement) => {
-        audio.muted = dailyAudiosState.muted;
-        if (!dailyAudiosState.muted) {
-          audio.volume = dailyAudiosState.volume;
-        }
-      });
-    }
-  }, [dailyAudiosState]);
-
-  const setAudios = useCallback(() => {
-    if (!dailyAudiosState) {
-      return;
-    }
-
-    if (dailyAudioRef?.current) {
-      setTimeout(() => {
-        setControlsState({
-          ...dailyAudiosState,
-          audios: dailyAudioRef?.current?.getAllAudio() || [],
-        });
-      });
-    }
-  }, [dailyAudiosState, setControlsState]);
-
-  useThrottledDailyEvent(
-    ['active-speaker-change', 'track-started', 'participant-left'],
-    useCallback(
-      (evts) => {
-        evts.forEach((ev) => {
-          console.log(ev);
-          switch (ev.action) {
-            case 'active-speaker-change':
-            case 'track-started':
-            case 'participant-left':
-              setAudios();
-              break;
-          }
-        });
-      },
-      [setAudios],
-    ),
-    200,
-  );
 
   const hasTray = useMemo(() => {
     if (role === 'presenter') {
@@ -95,7 +47,7 @@ export function Room() {
         <div className="relative flex w-full flex-1 flex-col md:w-[calc(100%-400px)]">
           <VcsPreview />
           {role === 'viewer' && dailyAudioRef?.current ? (
-            <Controls />
+            <Controls dailyAudioHandle={dailyAudioRef.current}/>
           ) : (
             ''
           )}
