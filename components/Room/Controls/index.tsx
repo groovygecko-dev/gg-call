@@ -1,11 +1,17 @@
+import { useCallback, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useControlsState } from '@/states/controlsState';
 import { useThrottledDailyEvent } from '@daily-co/daily-react';
 import { DailyAudioHandle } from '@daily-co/daily-react/dist/components/DailyAudio';
-import dynamic from 'next/dynamic';
-import { useCallback, useEffect } from 'react';
 
 const MuteButton = dynamic(() =>
   import('@/components/Room/Controls/MuteButton').then((mod) => mod.MuteButton),
+);
+
+const VolumeSlider = dynamic(() =>
+  import('@/components/Room/Controls/VolumeSlider').then(
+    (mod) => mod.VolumeSlider,
+  ),
 );
 
 export function Controls({
@@ -13,7 +19,6 @@ export function Controls({
 }: {
   dailyAudioHandle: DailyAudioHandle;
 }) {
-
   const [dailyAudiosState, setControlsState] = useControlsState();
 
   useEffect(() => {
@@ -40,22 +45,20 @@ export function Controls({
         });
       });
     }
-  }, [dailyAudiosState, setControlsState]);
+  }, [dailyAudiosState, dailyAudioHandle, setControlsState]);
 
   useThrottledDailyEvent(
     ['active-speaker-change', 'track-started', 'participant-left'],
-    useCallback(
-      () => {
-        setAudios();
-      },
-      [setAudios],
-    ),
+    useCallback(() => {
+      setAudios();
+    }, [setAudios]),
     200,
   );
 
   return (
-    <>
+    <div className="grid grid-cols-8 gap-2">
       <MuteButton />
-    </>
+      <VolumeSlider />
+    </div>
   );
 }

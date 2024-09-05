@@ -47,7 +47,7 @@ export function Room() {
         <div className="relative flex w-full flex-1 flex-col md:w-[calc(100%-400px)]">
           <VcsPreview />
           {role === 'viewer' && dailyAudioRef?.current ? (
-            <Controls dailyAudioHandle={dailyAudioRef.current}/>
+            <Controls dailyAudioHandle={dailyAudioRef.current} />
           ) : (
             ''
           )}
