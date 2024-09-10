@@ -56,7 +56,7 @@ export function Controls({
   );
 
   return (
-    <div className="grid grid-cols-8 gap-2">
+    <div className="flex items-center justify-center space-x-5">
       <MuteButton />
       <VolumeSlider />
     </div>

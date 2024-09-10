@@ -26,19 +26,17 @@ export function VolumeSlider() {
   );
 
   return (
-    <div className="col-span-7">
-      <div className="grid grid-cols-4 gap-2">
-        <label className="">{volume * 100}</label>
-        <Slider
-          disabled={disabled}
-          min={0}
-          max={1}
-          step={0.1}
-          value={[volume]}
-          className="w-full px-0 disabled:bg-slate-50"
-          onValueChange={handleChange}
-        ></Slider>
-      </div>
-    </div>
+    <>
+      <Slider
+        disabled={disabled}
+        min={0}
+        max={1}
+        step={0.1}
+        value={[volume]}
+        className="w-72 disabled:bg-slate-50"
+        onValueChange={handleChange}
+      ></Slider>
+      <span className="w-10">{disabled ? 0 : volume * 100}</span>
+    </>
   );
 }
