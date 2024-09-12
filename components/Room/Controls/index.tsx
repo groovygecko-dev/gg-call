@@ -59,12 +59,16 @@ export function Controls({
 
   return (
     <>
-      {isVisible ? <div className="fixed bottom-0 left-0 right-0 w-full bg-white/[.80]">
-        <div className="flex items-center justify-center space-x-5">
-          <MuteButton />
-          <VolumeSlider />
+      {isVisible ? (
+        <div className="fixed inset-x-0 bottom-0 w-full bg-white/[.80]">
+          <div className="flex items-center justify-center space-x-5">
+            <MuteButton />
+            <VolumeSlider />
+          </div>
         </div>
-      </div> : ''}
+      ) : (
+        ''
+      )}
     </>
   );
 }

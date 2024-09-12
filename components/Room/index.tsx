@@ -42,21 +42,28 @@ export function Room() {
     return true;
   }, [state, role]);
 
-  const onVisibleChange = useCallback((visible: boolean) => {
-    setVisible(visible);
-  }, [setVisible]);
+  const onVisibleChange = useCallback(
+    (visible: boolean) => {
+      setVisible(visible);
+    },
+    [setVisible],
+  );
 
   return (
     <div className="flex-1">
       <div className="flex h-full">
-        <div 
-          onMouseOver={() => onVisibleChange(true)} 
+        <div
+          onMouseOver={() => onVisibleChange(true)}
           onMouseOut={() => onVisibleChange(false)}
           onMouseLeave={() => onVisibleChange(false)}
-          className="relative flex w-full flex-1 flex-col md:w-[calc(100%-400px)]">
+          className="relative flex w-full flex-1 flex-col md:w-[calc(100%-400px)]"
+        >
           <VcsPreview />
           {role === 'viewer' && dailyAudioRef?.current ? (
-            <Controls dailyAudioHandle={dailyAudioRef.current} isVisible={isVisible} />
+            <Controls
+              dailyAudioHandle={dailyAudioRef.current}
+              isVisible={isVisible}
+            />
           ) : (
             ''
           )}
