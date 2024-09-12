@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useControlsState } from '@/states/controlsState';
 import { useThrottledDailyEvent } from '@daily-co/daily-react';
@@ -16,8 +16,10 @@ const VolumeSlider = dynamic(() =>
 
 export function Controls({
   dailyAudioHandle,
+  isVisible = false,
 }: {
   dailyAudioHandle: DailyAudioHandle;
+  isVisible: boolean;
 }) {
   const [dailyAudiosState, setControlsState] = useControlsState();
 
@@ -56,9 +58,13 @@ export function Controls({
   );
 
   return (
-    <div className="flex items-center justify-center space-x-5">
-      <MuteButton />
-      <VolumeSlider />
-    </div>
+    <>
+      {isVisible ? <div className="fixed bottom-0 left-0 right-0 w-full bg-white/[.80]">
+        <div className="flex items-center justify-center space-x-5">
+          <MuteButton />
+          <VolumeSlider />
+        </div>
+      </div> : ''}
+    </>
   );
 }

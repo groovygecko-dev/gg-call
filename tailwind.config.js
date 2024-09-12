@@ -78,6 +78,13 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
+    opacity: {
+      '25': '.25',
+      '50': '.50',
+      '75': '.75',
+      '80': '.80',
+      '90': '.90',
+    },
   },
   plugins: [require('tailwindcss-animate')],
 };
