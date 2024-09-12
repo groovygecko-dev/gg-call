@@ -76,7 +76,14 @@ export function EEMessageListener() {
       },
       false,
     );
-  }, [setEEApi, cancelRequestToJoin, requestToJoin, accept, deny]);
+  }, [
+    setEEApi,
+    cancelRequestToJoin,
+    requestToJoin,
+    accept,
+    deny,
+    handleControlsStateChange,
+  ]);
 
   useEffect(() => {
     if (role !== 'viewer') {
