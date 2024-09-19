@@ -36,7 +36,7 @@ export function VolumeSlider() {
         className={`w-72 ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
         onValueChange={handleChange}
       ></Slider>
-      <span className="w-10">{disabled ? 0 : volume * 100}</span>
+      {/* <span className="w-10">{disabled ? 0 : volume * 100}</span> */}
     </>
   );
 }

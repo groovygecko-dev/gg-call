@@ -47,17 +47,23 @@ export function ViewLayout() {
   const { toast } = useToast();
   const pathname = usePathname();
 
+  const role = useMemo(() => {
+    return pathname.split('/').pop();
+  }, [pathname]);
+
   useDailyEvent(
     'load-attempt-failed',
     useCallback(
       (ev: DailyEventObject) => {
+        if (role === 'viewer') return;
+
         toast({
           title: 'Failed to load meeting',
           description: ev.errorMsg,
           variant: 'destructive',
         });
       },
-      [toast],
+      [toast, role],
     ),
   );
 
@@ -66,13 +72,16 @@ export function ViewLayout() {
     useCallback(
       (ev: DailyEventObjectNetworkConnectionEvent) => {
         if (ev.event !== 'interrupted') return;
+
+        if (role === 'viewer') return;
+
         toast({
           title: 'Network connection interrupted',
           description: 'Attempting to reconnect...',
           variant: 'destructive',
         });
       },
-      [toast],
+      [toast, role],
     ),
   );
 
@@ -80,6 +89,9 @@ export function ViewLayout() {
     'error',
     useCallback(
       (ev) => {
+        console.log(role);
+        if (role === 'viewer') return;
+
         if (ev.errorMsg === 'network unreachable') {
           toast({
             title: 'Looks like you are offline',
@@ -89,7 +101,7 @@ export function ViewLayout() {
           daily?.leave();
         }
       },
-      [daily, toast],
+      [daily, toast, role],
     ),
   );
 
@@ -111,11 +123,6 @@ export function ViewLayout() {
     }
   }, [meetingState]);
 
-  const isViewer = useMemo(() => {
-    const role = pathname.split('/').pop();
-    return role === 'viewer';
-  }, [pathname]);
-
   useEffect(() => {
     return () => {
       daily?.leave();
@@ -124,7 +131,7 @@ export function ViewLayout() {
 
   return (
     <div className="flex h-full max-h-[100dvh] flex-col">
-      {isViewer ? '' : <Header />}
+      {role === 'viewer' ? '' : <Header />}
       {content}
       <Listeners />
     </div>

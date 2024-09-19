@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useParams } from '@/states/params';
 import { useToast } from '@/ui/useToast';
 import {
@@ -11,11 +11,18 @@ import { dequal } from 'dequal';
 import { MeetingSessionState } from '@/types/meetingSessionState';
 import { useIsOwner } from '@/hooks/useIsOwner';
 import { useMeetingSessionState } from '@/hooks/useMeetingSessionState';
+import { usePathname } from 'next/navigation';
 import { useStage } from '@/hooks/useStage';
 
 export const useRecord = () => {
   const { toast } = useToast();
   const isOwner = useIsOwner();
+  const pathname = usePathname();
+  
+  const isProducer = useMemo(() => {
+    return pathname.split('/').pop() === 'producer';
+  }, [pathname]);
+
   const {
     isRecording,
     layout,
@@ -25,13 +32,16 @@ export const useRecord = () => {
   } = useRecording({
     onRecordingError: useCallback(
       (ev: DailyEventObjectRecordingError) => {
+        
+        if (!isProducer) return;
+
         toast({
           title: 'Recording failed',
           description: ev.errorMsg,
           variant: 'destructive',
         });
       },
-      [toast],
+      [toast, isProducer],
     ),
   });
 
