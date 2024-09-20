@@ -25,6 +25,7 @@ export function Room() {
   const [isVisible, setVisible] = useState<boolean>(false);
   const { state } = useStage();
   const dailyAudioRef = useRef<DailyAudioHandle>(null);
+  
 
   useEffect(() => {
     setRole(pathname.split('/').pop() || '');
@@ -40,6 +41,10 @@ export function Room() {
     }
 
     return true;
+  }, [state, role]);
+
+  const hasControls = useMemo(() => {
+    return role === 'viewer' && !['on-stage', 'back-stage'].includes(state);
   }, [state, role]);
 
   const onVisibleChange = useCallback(
@@ -59,7 +64,7 @@ export function Room() {
           className="relative flex w-full flex-1 flex-col md:w-[calc(100%-400px)]"
         >
           <VcsPreview />
-          {role === 'viewer' && dailyAudioRef?.current ? (
+          {hasControls && dailyAudioRef?.current ? (
             <Controls
               dailyAudioHandle={dailyAudioRef.current}
               isVisible={isVisible}
