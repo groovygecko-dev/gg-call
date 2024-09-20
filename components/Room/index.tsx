@@ -25,7 +25,6 @@ export function Room() {
   const [isVisible, setVisible] = useState<boolean>(false);
   const { state } = useStage();
   const dailyAudioRef = useRef<DailyAudioHandle>(null);
-  
 
   useEffect(() => {
     setRole(pathname.split('/').pop() || '');
