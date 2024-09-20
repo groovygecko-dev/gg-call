@@ -17,6 +17,7 @@ import {
 
 import { useIsOwner } from '@/hooks/useIsOwner';
 import { useUserData } from '@/hooks/useUserData';
+import { useControlsState } from '@/states/controlsState';
 
 type RequestToJoinStage = {
   event: 'request-to-join-stage';
@@ -117,6 +118,7 @@ export const useStage = ({
   const [, setJoinStage] = useJoinStage();
 
   const sendAppMessage = useAppMessage<AppMessage>();
+  const [controlsState, setControlsState] = useControlsState();
 
   const handleRequestToJoin = useCallback(
     (payload: RequestToJoinStage['payload']) => {
@@ -145,6 +147,17 @@ export const useStage = ({
     [isOwner, onCancelRequestToJoin, setRequestedParticipants],
   );
 
+  const handleAcceptJoinStage = useCallback(
+    () => {
+      setControlsState({
+        ...controlsState,
+        muted: false,
+        volume: 100,
+      });
+    },
+    [controlsState, setControlsState],
+  );
+
   const handleAccept = useCallback(
     (payload: AcceptRequestToJoinStage['payload']) => {
       if (isOwner) {
@@ -156,6 +169,7 @@ export const useStage = ({
       } else if (localSessionId === payload.sessionId) {
         setIsRequesting(false);
         setJoinStage(true);
+        handleAcceptJoinStage();
       }
     },
     [
@@ -164,6 +178,7 @@ export const useStage = ({
       setIsRequesting,
       setJoinStage,
       setRequestedParticipants,
+      handleAcceptJoinStage
     ],
   );
 
