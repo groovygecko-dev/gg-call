@@ -152,7 +152,7 @@ export const useStage = ({
       setControlsState({
         ...controlsState,
         muted: false,
-        volume: 100,
+        volume: 1,
       });
     },
     [controlsState, setControlsState],
