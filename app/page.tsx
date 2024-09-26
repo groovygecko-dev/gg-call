@@ -2,7 +2,6 @@ import React from 'react';
 import { config } from '@/config';
 
 import { Header } from '@/components/Header';
-import { StartCall } from '@/components/StartCall';
 
 export default function IndexPage() {
   return (
@@ -13,7 +12,6 @@ export default function IndexPage() {
         <p className="w-full px-4 text-center leading-7 md:max-w-[600px] md:px-0">
           {config.description}
         </p>
-        <StartCall />
       </div>
     </div>
   );

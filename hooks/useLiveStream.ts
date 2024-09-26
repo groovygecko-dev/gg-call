@@ -12,10 +12,17 @@ import { MeetingSessionState } from '@/types/meetingSessionState';
 import { useIsOwner } from '@/hooks/useIsOwner';
 import { useMeetingSessionState } from '@/hooks/useMeetingSessionState';
 import { useStage } from '@/hooks/useStage';
+import { usePathname } from 'next/navigation';
 
 export const useLiveStream = () => {
   const { toast } = useToast();
   const isOwner = useIsOwner();
+  const pathname = usePathname();
+
+  const isProducer = useMemo(() => {
+    return pathname.split('/').pop() === 'producer';
+  }, [pathname]);
+
   const {
     layout,
     isLiveStreaming,
@@ -25,13 +32,16 @@ export const useLiveStream = () => {
   } = useLiveStreaming({
     onLiveStreamingError: useCallback(
       (ev: DailyEventObjectLiveStreamingError) => {
+
+        if (!isProducer) return;
+
         toast({
           title: 'Live-streaming failed',
           description: ev.errorMsg,
           variant: 'destructive',
         });
       },
-      [toast],
+      [toast, isProducer],
     ),
   });
 
@@ -90,7 +100,7 @@ export const useLiveStream = () => {
     );
 
     const areParticipantsEqual = dequal(
-      (layout as DailyUpdateStreamingCustomLayoutConfig).video,
+      (layout as DailyUpdateStreamingCustomLayoutConfig).participants?.video,
       participantIds,
     );
 
