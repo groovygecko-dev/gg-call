@@ -31,7 +31,7 @@ export function VolumeSlider() {
         disabled={disabled}
         min={0}
         max={1}
-        step={0.1}
+        step={0.05}
         value={[volume]}
         className={`w-72 ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
         onValueChange={handleChange}
