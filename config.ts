@@ -90,7 +90,7 @@ export const config = {
   },
   vcs: {
     mode: 'grid',
-    'videoSettings.showParticipantLabels': true,
+    'videoSettings.showParticipantLabels': false,
     'videoSettings.preferScreenshare': true,
     'videoSettings.omitPausedVideo': false,
     'videoSettings.omitAudioOnly': false,
